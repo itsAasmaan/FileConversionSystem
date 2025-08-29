@@ -1,26 +1,35 @@
 import { IConverter } from './IConverter';
+import csvtojson from 'csvtojson';
+import { Parser } from 'json2csv';
 
 export class CSVAdapter implements IConverter {
-    public async convert(data: string): Promise<string> {
-        const lines = data.trim().split('\n');
-        if (lines.length === 0) {
-            return '[]';
+    public async toJSON(input: string): Promise<string> {
+        try {
+            const result = await csvtojson().fromString(input);
+            return JSON.stringify(result, null, 2);
+        } catch (error) {
+            console.error("Error converting CSV to JSON:", error);
+            throw new Error("Invalid CSV input provided.");
         }
+    }
 
-        const headers = lines[0].split(',');
-        const result = [];
+    public async fromJSON(input: string): Promise<string> {
+        try {
+            const jsonObj = JSON.parse(input);
 
-        for (let i = 1; i < lines.length; i++) {
-            const values = lines[i].split(',');
-            const entry: any = {};
+            if (!Array.isArray(jsonObj) || jsonObj.length === 0) {
+                return "";
+            }
             
-            headers.forEach((header, index) => {
-                entry[header.trim()] = values[index] ? values[index].trim() : '';
-            });
+            const fields = Object.keys(jsonObj[0]);
             
-            result.push(entry);
+            const parser = new Parser({ fields });
+            const csv = parser.parse(jsonObj);
+            
+            return csv;
+        } catch (error) {
+            console.error("Error converting JSON to CSV:", error);
+            throw new Error("Invalid JSON input provided.");
         }
-
-        return JSON.stringify(result, null, 2);
     }
 }

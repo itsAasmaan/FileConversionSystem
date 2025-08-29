@@ -10,6 +10,7 @@
 /build
 
 # Miscellaneous
+/examples
 .DS_Store
 .env.local
 .env.development.local

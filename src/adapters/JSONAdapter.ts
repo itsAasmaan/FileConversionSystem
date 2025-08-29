@@ -1,33 +1,35 @@
 import { IConverter } from "./IConverter";
 
 export class JSONAdapter implements IConverter {
-  public async convert(input: string): Promise<string> {
-    let arr: any[];
+  /**
+   * Converts a string to JSON. Since the adapter's native format is JSON,
+   * this method validates the input and returns it, effectively acting as a passthrough.
+   * @param input The JSON string to be validated.
+   * @returns A Promise that resolves to the formatted JSON string.
+   */
+  public async toJSON(input: string): Promise<string> {
     try {
-      arr = JSON.parse(input);
+      const jsonObj = JSON.parse(input);
+      return JSON.stringify(jsonObj, null, 2);
     } catch (error) {
-      console.error("Failed to parse JSON input:", error);
-      return "";
+      console.error("Error: Invalid JSON input provided to JSONAdapter.");
+      throw new Error("Invalid JSON input for conversion.");
     }
+  }
 
-    if (!Array.isArray(arr) || arr.length === 0) {
-      return "";
+  /**
+   * Converts a JSON string to JSON. This method is the reverse of toJSON,
+   * and for the JSONAdapter, it also acts as a passthrough.
+   * @param input The JSON string to be formatted.
+   * @returns A Promise that resolves to the formatted JSON string.
+   */
+  public async fromJSON(input: string): Promise<string> {
+    try {
+      const jsonObj = JSON.parse(input);
+      return JSON.stringify(jsonObj, null, 2);
+    } catch (error) {
+      console.error("Error: Invalid JSON input provided to JSONAdapter.");
+      throw new Error("Invalid JSON input for conversion.");
     }
-
-    // Function to handle values with commas or quotes
-    const escapeCsvValue = (value: any): string => {
-      const stringValue = String(value);
-      if (stringValue.includes(",") || stringValue.includes('"')) {
-        return `"${stringValue.replace(/"/g, '""')}"`;
-      }
-      return stringValue;
-    };
-
-    const headers = Object.keys(arr[0]);
-    const rows = arr.map((obj) =>
-      headers.map((h) => escapeCsvValue(obj[h])).join(",")
-    );
-
-    return [headers.join(","), ...rows].join("\n");
   }
 }
