@@ -3,6 +3,7 @@ import { CSVAdapter } from "../adapters/CSVAdapter";
 import { YAMLAdapter } from "../adapters/YAMLAdapter";
 import { JSONAdapter } from "../adapters/JSONAdapter";
 import { IConverter } from "../adapters/IConverter";
+import { IFileSource } from "../io/IFileSource";
 
 type SupportedFormat = keyof typeof FileConverterFacade.prototype.adapters;
 
@@ -51,7 +52,7 @@ export class FileConverterFacade {
 
     try {
       const jsonString = await this.toJSON(fromFormat, input);
-      
+
       const convertedString = await this.fromJSON(toFormat, jsonString);
 
       return convertedString;
@@ -63,5 +64,18 @@ export class FileConverterFacade {
       }
       throw new Error("An unknown error occurred during conversion.");
     }
+  }
+
+  async convertFile(
+    inputSource: IFileSource,
+    outputSource: IFileSource,
+    from: SupportedFormat,
+    to: SupportedFormat
+  ): Promise<void> {
+    const rawInput = await inputSource.read();
+
+    const result = await this.convert(rawInput, from, to);
+
+    await outputSource.write(result);
   }
 }
