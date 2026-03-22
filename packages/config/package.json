@@ -1,0 +1,9 @@
+{
+  "name": "@file-conversion-system/config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared project configuration package",
+  "scripts": {
+    "build": "echo \"Config package does not build\""
+  }
+}

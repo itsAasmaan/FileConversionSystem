@@ -1,0 +1,10 @@
+{
+  "name": "@file-conversion-system/shared-types",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared DTOs, schemas, and enums",
+  "scripts": {
+    "build": "echo \"Shared types scaffold pending\"",
+    "test": "echo \"No tests yet\""
+  }
+}

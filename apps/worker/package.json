@@ -1,0 +1,10 @@
+{
+  "name": "@file-conversion-system/worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Background worker for the File Conversion System",
+  "scripts": {
+    "build": "echo \"Worker scaffold pending\"",
+    "test": "echo \"No tests yet\""
+  }
+}

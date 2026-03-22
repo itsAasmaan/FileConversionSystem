@@ -1,0 +1,10 @@
+{
+  "name": "@file-conversion-system/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API service for the File Conversion System",
+  "scripts": {
+    "build": "echo \"API scaffold pending\"",
+    "test": "echo \"No tests yet\""
+  }
+}
