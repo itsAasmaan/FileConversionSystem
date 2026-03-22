@@ -5,11 +5,17 @@
   "description": "Core conversion engine for the File Conversion System",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "ts-node src/demo.ts",
-    "test": "echo \"No tests yet\""
+    "test": "npm run build && node --test tests/*.test.js"
   },
   "dependencies": {
     "csvtojson": "^2.0.10",

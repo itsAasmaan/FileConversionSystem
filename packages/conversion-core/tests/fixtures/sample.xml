@@ -1,0 +1,12 @@
+<root>
+  <item>
+    <id>1</id>
+    <name>Ada</name>
+    <role>Engineer</role>
+  </item>
+  <item>
+    <id>2</id>
+    <name>Linus</name>
+    <role>Architect</role>
+  </item>
+</root>

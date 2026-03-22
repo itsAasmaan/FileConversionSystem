@@ -4,23 +4,29 @@ import { YAMLAdapter } from "../adapters/YAMLAdapter";
 import { JSONAdapter } from "../adapters/JSONAdapter";
 import { IConverter } from "../adapters/IConverter";
 import { IFileSource } from "../io/IFileSource";
-
-type SupportedFormat = keyof typeof FileConverterFacade.prototype.adapters;
+import {
+  ConversionCoreError,
+  ConversionError,
+  UnsupportedFormatError,
+} from "../errors";
+import { SUPPORTED_FORMATS, SupportedFormat } from "../formats";
 
 export class FileConverterFacade {
-  public adapters = {
+  public readonly adapters: Record<SupportedFormat, IConverter> = {
     xml: new XMLAdapter(),
     csv: new CSVAdapter(),
     yaml: new YAMLAdapter(),
     json: new JSONAdapter(),
   };
 
+  public getSupportedFormats(): readonly SupportedFormat[] {
+    return SUPPORTED_FORMATS;
+  }
+
   private getAdapter(format: SupportedFormat): IConverter {
     const adapter = this.adapters[format];
     if (!adapter) {
-      throw new Error(
-        `Unsupported format: ${format}. Please provide a valid format.`
-      );
+      throw new UnsupportedFormatError(format);
     }
     return adapter;
   }
@@ -57,16 +63,22 @@ export class FileConverterFacade {
 
       return convertedString;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(
-          `Failed to convert from ${fromFormat} to ${toFormat}: ${error.message}`
-        );
+      if (error instanceof ConversionCoreError) {
+        throw error;
       }
-      throw new Error("An unknown error occurred during conversion.");
+
+      if (error instanceof Error) {
+        throw new ConversionError(fromFormat, toFormat, error.message);
+      }
+      throw new ConversionError(
+        fromFormat,
+        toFormat,
+        "An unknown error occurred during conversion."
+      );
     }
   }
 
-  async convertFile(
+  public async convertFile(
     inputSource: IFileSource,
     outputSource: IFileSource,
     from: SupportedFormat,
